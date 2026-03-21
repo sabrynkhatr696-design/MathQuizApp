@@ -1,3 +1,5 @@
 Backups/
 *.pyc
 __pycache__/
+.idea/
+
