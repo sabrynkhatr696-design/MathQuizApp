@@ -2,6 +2,10 @@
 
 A simple Math Quiz Application built using Python and SQLite.
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f4be30a879c29340199606b6b85648c490103402
 ##📌 Features
 - User Registration & Login system
 - Add questions (Admin mode)
@@ -20,6 +24,10 @@ A simple Math Quiz Application built using Python and SQLite.
 1. Open the project in PyCharm or any Python IDE
 2. Run the main file:
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f4be30a879c29340199606b6b85648c490103402
 ##🗄️ Database
 The app uses SQLite database:
 - users → stores usernames and passwords
@@ -34,6 +42,7 @@ The project automatically creates backups of the database in a separate folder.
 - Improve validation and error handling
 - Add timer for questions
 - Add more question categories
+<<<<<<< HEAD
 
 ## 📸 Screenshot
 ![App Screenshot](screenshot.png)
@@ -41,3 +50,11 @@ The project automatically creates backups of the database in a separate folder.
 ---
 
 👨‍💻 Developed by: Sabrin Khater
+=======
+## 📸 Screenshot
+![App Screenshot](screenshot.png)
+---
+
+👨‍💻 Developed by: Sabrin Khater
+  
+>>>>>>> f4be30a879c29340199606b6b85648c490103402
