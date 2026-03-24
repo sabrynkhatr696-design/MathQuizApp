@@ -36,7 +36,9 @@ The project automatically creates backups of the database in a separate folder.
 - Improve validation and error handling
 - Add timer for questions
 - Add more question categories
-
+## 📸 Screenshot
+![App Screenshot](screenshot.png)
 ---
 
 👨‍💻 Developed by: Sabrin Khater
+  
