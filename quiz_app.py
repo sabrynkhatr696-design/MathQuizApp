@@ -1,16 +1,21 @@
 import sqlite3
 from datetime import datetime
 import random
-
 # فتح الاتصال بقاعدة البيانات
 conn = sqlite3.connect("global.db")
 cursor = conn.cursor()
+
 # ==========================
 # 1️⃣ تسجيل المستخدم / تسجيل الدخول
 # ==========================
 def register_user():
     username = input("Enter your username: ").strip().lower()
-    password = input("Enter your password: ").strip()
+    password = input("Enter your password (min 6 chars): ").strip()
+
+    # تحقق من طول كلمة المرور
+    if len(password) < 6:
+        print("Password must be at least 6 characters!")
+        return None
 
     # تحقق من وجود المستخدم
     cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?", (username,))
@@ -36,22 +41,34 @@ def login_user():
         print("Incorrect username or password!")
         return None
 
+
 # ==========================
 # 2️⃣ إضافة أسئلة (للمعلم أو المطور)
 # ==========================
 def add_question():
-    question = input("Enter the question: ")
-    answer = input("Enter the correct answer: ")
-    level = input("Enter difficulty level (easy/medium/hard): ").lower()
+    question = input("Enter the question: ").strip()
+    answer = input("Enter the correct answer: ").strip()
+
+    # التحقق من مستوى الصعوبة
+    level = input("Enter difficulty level (easy/medium/hard): ").lower().strip()
+    if level not in ["easy", "medium", "hard"]:
+        print("Invalid level! Please enter: easy, medium, or hard.")
+        return
+
     cursor.execute("INSERT INTO questions (question, answer, level) VALUES (?, ?, ?)", (question, answer, level))
     conn.commit()
     print("Question added successfully ✅")
+
 
 # ==========================
 # 3️⃣ بدء الاختبار
 # ==========================
 def start_quiz(user_id):
-    level = input("Choose difficulty level (easy/medium/hard): ").lower()
+    level = input("Choose difficulty level (easy/medium/hard): ").lower().strip()
+    if level not in ["easy", "medium", "hard"]:
+        print("Invalid level! Please choose easy, medium, or hard.")
+        return
+
     cursor.execute("SELECT id, question, answer FROM questions WHERE level = ?", (level,))
     questions = cursor.fetchall()
     if not questions:
@@ -67,7 +84,7 @@ def start_quiz(user_id):
             print("✅ Correct!")
             score += 1
         else:
-            print(f"❌ Wrong! Correct answer: 1{q[2]}")
+            print(f"❌ Wrong! Correct answer: {q[2]}")
 
     print(f"\nQuiz finished! Your score: {score}/{len(questions)}")
 
@@ -89,7 +106,8 @@ def main():
         print("2. Login")
         print("3. Add Question (Admin)")
         print("4. Exit")
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice: ").strip()
+
         if choice == "1":
             register_user()
         elif choice == "2":
@@ -102,12 +120,15 @@ def main():
             print("Goodbye!")
             break
         else:
-            print("Invalid choice!")
+            print("Invalid choice! Please select 1-4 only.")
+
 
 if __name__ == "__main__":
-    main()
-    cursor.close()
-    conn.close()
+    try:
+        main()
+    finally:
+        cursor.close()
+        conn.close()
     #  نفس الكود بس عليه شرح بالعربي
     # import sqlite3  # استيراد مكتبة للتعامل مع قواعد بيانات SQLite
     # from datetime import datetime  # استيراد مكتبة للتعامل مع التاريخ والوقت
