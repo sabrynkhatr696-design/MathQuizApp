@@ -22,28 +22,36 @@ st.markdown("""
     }
     .subtitle {
         text-align: center;
-        color: #444;
+        color: #555;
         font-size: 18px;
         margin-bottom: 25px;
     }
     .question-box {
         background-color: #fff4f8;
-        padding: 18px;
-        border-radius: 15px;
+        padding: 20px;
+        border-radius: 16px;
         border: 2px solid #ffd1e1;
         margin-top: 15px;
         margin-bottom: 15px;
     }
     .score-box {
         background-color: #eefaf0;
-        padding: 15px;
-        border-radius: 12px;
+        padding: 18px;
+        border-radius: 14px;
         border: 1px solid #b7ebc0;
-        font-size: 20px;
+        font-size: 22px;
         font-weight: bold;
         color: #1f7a36;
         text-align: center;
         margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    .mini-box {
+        background-color: #f7f7ff;
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -81,7 +89,7 @@ def register_user(username, password):
     )
     conn.commit()
     conn.close()
-    return True, "Registered successfully."
+    return True, "Registered successfully. You can log in now."
 
 
 def login_user(username, password):
@@ -131,10 +139,13 @@ def reset_quiz_state():
     st.session_state.current_question = 0
     st.session_state.correct_answers = 0
     st.session_state.selected_level = None
-    st.session_state.feedback = ""
+    st.session_state.last_feedback = ""
+    st.session_state.quiz_finished = False
 
 
-# session state
+# ----------------------------
+# Session state
+# ----------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
@@ -159,10 +170,16 @@ if "correct_answers" not in st.session_state:
 if "selected_level" not in st.session_state:
     st.session_state.selected_level = None
 
-if "feedback" not in st.session_state:
-    st.session_state.feedback = ""
+if "last_feedback" not in st.session_state:
+    st.session_state.last_feedback = ""
+
+if "quiz_finished" not in st.session_state:
+    st.session_state.quiz_finished = False
 
 
+# ----------------------------
+# Title
+# ----------------------------
 st.markdown('<div class="main-title">🎯 Math Quiz App</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="subtitle">Solve all questions, get your final score out of 10, and enjoy the quiz ✨</div>',
@@ -170,6 +187,9 @@ st.markdown(
 )
 
 
+# ----------------------------
+# Auth section
+# ----------------------------
 if not st.session_state.logged_in:
     tab1, tab2 = st.tabs(["Login", "Register"])
 
@@ -178,7 +198,7 @@ if not st.session_state.logged_in:
         login_username = st.text_input("Username", key="login_username")
         login_password = st.text_input("Password", type="password", key="login_password")
 
-        if st.button("Login"):
+        if st.button("🔐 Login"):
             user = login_user(login_username, login_password)
             if user:
                 st.session_state.logged_in = True
@@ -195,18 +215,22 @@ if not st.session_state.logged_in:
         reg_username = st.text_input("Choose a username", key="reg_username")
         reg_password = st.text_input("Choose a password", type="password", key="reg_password")
 
-        if st.button("Register"):
+        if st.button("📝 Register"):
             success, message = register_user(reg_username, reg_password)
             if success:
-                st.success(message + " You can now log in.")
+                st.success(message)
             else:
                 st.error(message)
 
+# ----------------------------
+# Quiz section
+# ----------------------------
 else:
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.success(f"Logged in as: {st.session_state.username}")
-    with col2:
+    top1, top2 = st.columns([4, 1])
+
+    with top1:
+        st.markdown(f"### 👋 Hello, {st.session_state.username}")
+    with top2:
         if st.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.user_id = None
@@ -214,11 +238,11 @@ else:
             reset_quiz_state()
             st.rerun()
 
-    if not st.session_state.quiz_started:
+    if not st.session_state.quiz_started and not st.session_state.quiz_finished:
         st.subheader("Start Your Quiz")
         level = st.selectbox("Choose difficulty level", ["easy", "medium", "hard"])
 
-        if st.button("Start Quiz"):
+        if st.button("🚀 Start Quiz"):
             questions = get_questions_by_level(level)
             if not questions:
                 st.warning(f"No questions found for level '{level}'.")
@@ -228,67 +252,90 @@ else:
                 st.session_state.quiz_started = True
                 st.session_state.current_question = 0
                 st.session_state.correct_answers = 0
-                st.session_state.feedback = ""
+                st.session_state.last_feedback = ""
+                st.session_state.quiz_finished = False
                 st.rerun()
 
-    else:
+    elif st.session_state.quiz_started and not st.session_state.quiz_finished:
         total_questions = len(st.session_state.questions)
         current_index = st.session_state.current_question
 
         if current_index < total_questions:
             q_id, question_text, correct_answer = st.session_state.questions[current_index]
 
-            st.write(f"**Level:** {st.session_state.selected_level.title()}")
+            st.markdown(
+                f"""
+                <div class="mini-box">
+                    <b>Level:</b> {st.session_state.selected_level.title()} &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Question:</b> {current_index + 1} / {total_questions} &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <b>Score:</b> {st.session_state.correct_answers}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
             st.progress((current_index + 1) / total_questions)
-            st.write(f"**Question {current_index + 1} of {total_questions}**")
 
             st.markdown(
                 f'<div class="question-box"><h2 style="margin:0;">{question_text}</h2></div>',
                 unsafe_allow_html=True
             )
 
-            user_answer = st.text_input("Your answer", key=f"answer_{current_index}")
+            answer_key = f"answer_input_{current_index}"
+            user_answer = st.text_input("Your answer", key=answer_key)
 
-            if st.button("Submit Answer"):
+            if st.button("🚀 Submit Answer"):
                 if user_answer.strip().lower() == str(correct_answer).strip().lower():
                     st.session_state.correct_answers += 1
-                    st.session_state.feedback = "✅ Correct answer!"
+                    st.session_state.last_feedback = ("success", "✅ Correct answer!")
                 else:
-                    st.session_state.feedback = f"❌ Wrong answer. Correct answer: {correct_answer}"
+                    st.session_state.last_feedback = ("error", f"❌ Wrong answer. Correct answer: {correct_answer}")
 
                 st.session_state.current_question += 1
+
+                if st.session_state.current_question >= total_questions:
+                    st.session_state.quiz_started = False
+                    st.session_state.quiz_finished = True
+
                 st.rerun()
 
-            if st.session_state.feedback:
-                st.info(st.session_state.feedback)
+            if st.session_state.last_feedback:
+                kind, message = st.session_state.last_feedback
+                if kind == "success":
+                    st.success(message)
+                else:
+                    st.error(message)
 
+    elif st.session_state.quiz_finished:
+        correct = st.session_state.correct_answers
+        total = len(st.session_state.questions)
+
+        score_out_of_10 = round((correct / total) * 10, 2) if total > 0 else 0
+
+        save_score(st.session_state.user_id, score_out_of_10)
+
+        st.balloons()
+
+        st.markdown(
+            f'<div class="score-box">🏆 Your Final Score: {score_out_of_10} / 10</div>',
+            unsafe_allow_html=True
+        )
+
+        st.write(f"Correct answers: **{correct} / {total}**")
+
+        if score_out_of_10 >= 8:
+            st.success("Excellent work! 🌟")
+        elif score_out_of_10 >= 5:
+            st.info("Good job! Keep practicing 💪")
         else:
-            correct = st.session_state.correct_answers
-            total = len(st.session_state.questions)
-            score_out_of_10 = round((correct / total) * 10, 2)
+            st.warning("Nice try. Practice more and come back stronger 📚")
 
-            save_score(st.session_state.user_id, score_out_of_10)
-
-            st.balloons()
-            st.markdown(
-                f'<div class="score-box">Your final score: {score_out_of_10} / 10 🎓</div>',
-                unsafe_allow_html=True
-            )
-            st.write(f"Correct answers: **{correct} / {total}**")
-
-            if score_out_of_10 >= 8:
-                st.success("Excellent work! 🌟")
-            elif score_out_of_10 >= 5:
-                st.info("Good job! Keep practicing 💪")
-            else:
-                st.warning("Nice try. Practice more and come back stronger 📚")
-
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("Play Again"):
-                    reset_quiz_state()
-                    st.rerun()
-            with col2:
-                if st.button("Change Level"):
-                    reset_quiz_state()
-                    st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Restart Quiz"):
+                reset_quiz_state()
+                st.rerun()
+        with col2:
+            if st.button("🎯 Change Level"):
+                reset_quiz_state()
+                st.rerun()
