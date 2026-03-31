@@ -37,8 +37,13 @@ An interactive and colorful Math Quiz web app built using **Python**, **Streamli
 
 ---
 
-## 📸 Screenshot
-![App Screenshot](screenshot.png)
+## 📸 Screenshots
+
+### 🔐 Login Screen
+![Login](login.jpg)
+
+### 🏆 Result Screen
+![Result](result.jpg)
 
 ---
 
