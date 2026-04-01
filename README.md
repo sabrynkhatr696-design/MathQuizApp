@@ -58,3 +58,8 @@ Developed by **Sabrin Khater** 💙
 - 🏆 Leaderboard system  
 - 🎵 Sound effects for kids  
 - 🌙 Dark mode
+
+📌 Note:
+If the app doesn’t load immediately,
+click on "Wake up / Get this app back up"
+and wait a few seconds ⏳ — it will run normally.
