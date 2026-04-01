@@ -7,6 +7,10 @@ An interactive and colorful Math Quiz web app built using **Python**, **Streamli
 ## 🚀 Live Demo
 👉 https://mxxe2lj5epdg7ubza96q6s.streamlit.app
 
+📌 Note:
+If the app doesn’t load immediately,
+click on "Wake up / Get this app back up"
+and wait a few seconds ⏳ — it will run normally.
 ---
 
 ## 💡 Features
@@ -59,7 +63,4 @@ Developed by **Sabrin Khater** 💙
 - 🎵 Sound effects for kids  
 - 🌙 Dark mode
 
-📌 Note:
-If the app doesn’t load immediately,
-click on "Wake up / Get this app back up"
-and wait a few seconds ⏳ — it will run normally.
+
