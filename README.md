@@ -8,9 +8,8 @@ An interactive and colorful Math Quiz web app built using **Python**, **Streamli
 👉 https://mxxe2lj5epdg7ubza96q6s.streamlit.app
 
 📌 Note:
-If the app doesn’t load immediately,
-click on "Wake up / Get this app back up"
-and wait a few seconds ⏳ — it will run normally.
+The app may take a few seconds to start.
+Just click the blue button and it will load automatically ⏳
 ---
 
 ## 💡 Features
