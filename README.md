@@ -7,6 +7,8 @@ An interactive and colorful Math Quiz web app built using **Python**, **Streamli
 ## 🚀 Live Demo
 👉 https://mxxe2lj5epdg7ubza96q6s.streamlit.app
 
+⚡ No installation needed — the app runs directly in your browser.
+
 📌 Note:
 The app may take a few seconds to start.
 Just click the blue button and it will load automatically ⏳
